@@ -13,12 +13,18 @@ import (
 )
 
 type (
-	CancelReq  = pb.CancelReq
-	CancelResp = pb.CancelResp
+	CancelReq    = pb.CancelReq
+	CancelResp   = pb.CancelResp
+	LoginReq     = pb.LoginReq
+	LoginResp    = pb.LoginResp
+	RegisterReq  = pb.RegisterReq
+	RegisterResp = pb.RegisterResp
 
 	Usercenter interface {
 		// 用户注销
 		Cancel(ctx context.Context, in *CancelReq, opts ...grpc.CallOption) (*CancelResp, error)
+		Register(ctx context.Context, in *RegisterReq, opts ...grpc.CallOption) (*RegisterResp, error)
+		Login(ctx context.Context, in *LoginReq, opts ...grpc.CallOption) (*LoginResp, error)
 	}
 
 	defaultUsercenter struct {
@@ -36,4 +42,14 @@ func NewUsercenter(cli zrpc.Client) Usercenter {
 func (m *defaultUsercenter) Cancel(ctx context.Context, in *CancelReq, opts ...grpc.CallOption) (*CancelResp, error) {
 	client := pb.NewUsercenterClient(m.cli.Conn())
 	return client.Cancel(ctx, in, opts...)
+}
+
+func (m *defaultUsercenter) Register(ctx context.Context, in *RegisterReq, opts ...grpc.CallOption) (*RegisterResp, error) {
+	client := pb.NewUsercenterClient(m.cli.Conn())
+	return client.Register(ctx, in, opts...)
+}
+
+func (m *defaultUsercenter) Login(ctx context.Context, in *LoginReq, opts ...grpc.CallOption) (*LoginResp, error) {
+	client := pb.NewUsercenterClient(m.cli.Conn())
+	return client.Login(ctx, in, opts...)
 }

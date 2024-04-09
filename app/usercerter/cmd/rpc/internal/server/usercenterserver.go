@@ -27,3 +27,13 @@ func (s *UsercenterServer) Cancel(ctx context.Context, in *pb.CancelReq) (*pb.Ca
 	l := logic.NewCancelLogic(ctx, s.svcCtx)
 	return l.Cancel(in)
 }
+
+func (s *UsercenterServer) Register(ctx context.Context, in *pb.RegisterReq) (*pb.RegisterResp, error) {
+	l := logic.NewRegisterLogic(ctx, s.svcCtx)
+	return l.Register(in)
+}
+
+func (s *UsercenterServer) Login(ctx context.Context, in *pb.LoginReq) (*pb.LoginResp, error) {
+	l := logic.NewLoginLogic(ctx, s.svcCtx)
+	return l.Login(in)
+}

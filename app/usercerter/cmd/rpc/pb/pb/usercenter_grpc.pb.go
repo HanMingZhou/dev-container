@@ -19,7 +19,9 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	Usercenter_Cancel_FullMethodName = "/pb.usercenter/cancel"
+	Usercenter_Cancel_FullMethodName   = "/pb.usercenter/cancel"
+	Usercenter_Register_FullMethodName = "/pb.usercenter/register"
+	Usercenter_Login_FullMethodName    = "/pb.usercenter/login"
 )
 
 // UsercenterClient is the client API for Usercenter service.
@@ -28,6 +30,8 @@ const (
 type UsercenterClient interface {
 	// 用户注销
 	Cancel(ctx context.Context, in *CancelReq, opts ...grpc.CallOption) (*CancelResp, error)
+	Register(ctx context.Context, in *RegisterReq, opts ...grpc.CallOption) (*RegisterResp, error)
+	Login(ctx context.Context, in *LoginReq, opts ...grpc.CallOption) (*LoginResp, error)
 }
 
 type usercenterClient struct {
@@ -47,12 +51,32 @@ func (c *usercenterClient) Cancel(ctx context.Context, in *CancelReq, opts ...gr
 	return out, nil
 }
 
+func (c *usercenterClient) Register(ctx context.Context, in *RegisterReq, opts ...grpc.CallOption) (*RegisterResp, error) {
+	out := new(RegisterResp)
+	err := c.cc.Invoke(ctx, Usercenter_Register_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *usercenterClient) Login(ctx context.Context, in *LoginReq, opts ...grpc.CallOption) (*LoginResp, error) {
+	out := new(LoginResp)
+	err := c.cc.Invoke(ctx, Usercenter_Login_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UsercenterServer is the server API for Usercenter service.
 // All implementations must embed UnimplementedUsercenterServer
 // for forward compatibility
 type UsercenterServer interface {
 	// 用户注销
 	Cancel(context.Context, *CancelReq) (*CancelResp, error)
+	Register(context.Context, *RegisterReq) (*RegisterResp, error)
+	Login(context.Context, *LoginReq) (*LoginResp, error)
 	mustEmbedUnimplementedUsercenterServer()
 }
 
@@ -62,6 +86,12 @@ type UnimplementedUsercenterServer struct {
 
 func (UnimplementedUsercenterServer) Cancel(context.Context, *CancelReq) (*CancelResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Cancel not implemented")
+}
+func (UnimplementedUsercenterServer) Register(context.Context, *RegisterReq) (*RegisterResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Register not implemented")
+}
+func (UnimplementedUsercenterServer) Login(context.Context, *LoginReq) (*LoginResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Login not implemented")
 }
 func (UnimplementedUsercenterServer) mustEmbedUnimplementedUsercenterServer() {}
 
@@ -94,6 +124,42 @@ func _Usercenter_Cancel_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Usercenter_Register_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RegisterReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UsercenterServer).Register(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Usercenter_Register_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UsercenterServer).Register(ctx, req.(*RegisterReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Usercenter_Login_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LoginReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UsercenterServer).Login(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Usercenter_Login_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UsercenterServer).Login(ctx, req.(*LoginReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Usercenter_ServiceDesc is the grpc.ServiceDesc for Usercenter service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -104,6 +170,14 @@ var Usercenter_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "cancel",
 			Handler:    _Usercenter_Cancel_Handler,
+		},
+		{
+			MethodName: "register",
+			Handler:    _Usercenter_Register_Handler,
+		},
+		{
+			MethodName: "login",
+			Handler:    _Usercenter_Login_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -9,15 +9,43 @@ message CancelReq {
   string uuid = 2;
 }
 
-// 用户注销时所返回参数
 message CancelResp {
   int64 code  = 1;
   string message = 2;
 }
 
+// 用户注册时需携带参数
+message RegisterReq {
+  string Username =1;
+  string Password=2;
+  string NickName=3;
+  string HeaderImg=4;
+  int64 AuthorityId=5;
+  string Phone=6;
+  string Email=7;
+}
+
+message RegisterResp {
+  int64 code  = 1;
+  string message = 2;
+}
+
+// 用户登录时需携带参数
+message LoginReq {
+ string Username=1;
+ string Password=2;
+}
+message LoginResp {
+     string NickName=1;
+     string HeaderImg=2;
+     string AccessToken=3;
+     int64  AccessExpire=4;
+}
 
 // rpc 服务注册
 service usercenter {
   // 用户注销
   rpc cancel(CancelReq) returns(CancelResp);
+  rpc register(RegisterReq) returns(RegisterResp);
+  rpc login(LoginReq) returns(LoginResp);
 }

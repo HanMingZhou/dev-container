@@ -2,12 +2,10 @@ package user
 
 import (
 	"context"
-	"errors"
 	"github.com/zeromicro/go-zero/core/logx"
 	"go-zero-container/app/usercerter/cmd/api/internal/svc"
 	"go-zero-container/app/usercerter/cmd/api/internal/types"
-	common_models "go-zero-container/common/global/models"
-	jwt_token "go-zero-container/common/jwt-token"
+	"go-zero-container/app/usercerter/cmd/rpc/usercenter"
 )
 
 type LoginLogic struct {
@@ -30,30 +28,43 @@ func NewLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LoginLogic 
 
 func (l *LoginLogic) Login(req *types.LoginReq) (resp *types.LoginResp, err error) {
 	// todo: add your logic here and delete this line
-	var user common_models.SysUser
-	err = l.svcCtx.DB.First(&user, "username = ? and password = ?", req.Username, req.Password).Error
+	//var user common_models.SysUser
+	//err = l.svcCtx.DB.First(&user, "username = ? and password = ?", req.Username, req.Password).Error
+	//if err != nil {
+	//	return nil, errors.New("用户账号或密码错误")
+	//}
+	//
+	//// 对账户状态进行判断，1->正常用户 2 ->被封号用户
+	//if user.Enable != 1 {
+	//	return nil, errors.New("当前账户已被限制登录，请联系管理员咨询解决方案")
+	//}
+	//
+	//// 加载 jwt 相关配置
+	//gtr, err := jwt_token.GenerateToken(user)
+	//
+	//if err != nil {
+	//	return nil, errors.New("创建jwt失败，请稍后重试")
+	//}
+	//
+	//return &types.LoginResp{
+	//	NickName:     user.NickName,
+	//	HeaderImg:    user.HeaderImg,
+	//	AccessToken:  gtr.AccessSecret,
+	//	AccessExpire: gtr.AccessExpire,
+	//}, err
+	res, err := l.svcCtx.UsercenterRpc.Login(l.ctx, &usercenter.LoginReq{
+		Username: req.Username,
+		Password: req.Password,
+	})
 	if err != nil {
-		return nil, errors.New("用户账号或密码错误")
+		return nil, err
 	}
-
-	// 对账户状态进行判断，1->正常用户 2 ->被封号用户
-	if user.Enable != 1 {
-		return nil, errors.New("当前账户已被限制登录，请联系管理员咨询解决方案")
-	}
-
-	// 加载 jwt 相关配置
-	gtr, err := jwt_token.GenerateToken(user)
-
-	if err != nil {
-		return nil, errors.New("创建jwt失败，请稍后重试")
-	}
-
 	return &types.LoginResp{
-		NickName:     user.NickName,
-		HeaderImg:    user.HeaderImg,
-		AccessToken:  gtr.AccessSecret,
-		AccessExpire: gtr.AccessExpire,
-	}, err
+		AccessToken:  res.AccessToken,
+		AccessExpire: res.AccessExpire,
+		NickName:     res.NickName,
+		HeaderImg:    res.HeaderImg,
+	}, nil
 
 }
 
