@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package pb;
+
+option go_package = "./pb";
+// 用户注销时需携带参数
+message CancelReq {
+  string username = 1;
+  string uuid = 2;
+}
+
+// 用户注销时所返回参数
+message CancelResp {
+  int64 code  = 1;
+  string message = 2;
+}
+
+
+// rpc 服务注册
+service usercenter {
+  // 用户注销
+  rpc cancel(CancelReq) returns(CancelResp);
+}

@@ -1,0 +1,31 @@
+Name: usercenter.rpc
+ListenOn: 0.0.0.0:8080
+Etcd:
+  Hosts:
+  - 127.0.0.1:2379
+  Key: usercenter.rpc
+
+Timeout: 5000000
+
+# 日志记录配置
+Log:
+  ServiceName: file
+  Level: error
+  Encoding: plain
+
+# mysql配置
+Mysql:
+  DataSource: root:123456@tcp(127.0.0.1:3306)/db1?charset=utf8mb4&parseTime=True&loc=Local
+
+
+# jwtAuth 配置
+JwtAuth:
+  AccessSecret: ae0536f9-6450-4606-8e13-5a19ed505da0
+  AccessExpire: 31536000
+
+
+# prometheus 监控配置
+Prometheus:
+  Host: 0.0.0.0
+  Port: 8002
+  Path: /metrics

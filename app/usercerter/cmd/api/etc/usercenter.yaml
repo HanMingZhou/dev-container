@@ -1,0 +1,38 @@
+Name: usercenter
+Host: 0.0.0.0
+Port: 8888
+
+# 日志记录配置
+Log:
+  ServiceName: file
+  Level: error
+  Encoding: plain
+
+# RPC服务配置
+UsercenterRpcConf:
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: usercenter.rpc
+
+# mysql配置
+Mysql:
+  DataSource: root:123456@tcp(127.0.0.1:3306)/db1?charset=utf8mb4&parseTime=True&loc=Local
+
+# jwtAuth
+JwtAuth:
+  AccessSecret: ae0536f9-6450-4606-8e13-5a19ed505da0
+  AccessExpire: 31536000
+
+
+# harbor
+#Harbor:
+#  Host: 192.168.0.78:8077
+#  Username: admin
+#  Password: Harbor12345
+
+# prometheus 监控配置
+Prometheus:
+  Host: 0.0.0.0
+  Port: 8001
+  Path: /metrics

@@ -1,0 +1,73 @@
+syntax = "v1"
+
+info (
+	title:   "type title here"
+	desc:    "type desc here"
+	author:  "type author here"
+	email:   "type email here"
+	version: "type version here"
+)
+
+// 需要 jwt 认证登录状态
+@server (
+	prefix: usercenter/v1
+	group:  user
+	jwt:    JwtAuth
+)
+service usercenter {
+	@doc "register"
+	@handler register
+	post /user/register (RegisterReq) returns (RegisterResp)
+
+	@doc "login"
+	@handler login
+	post /user/login (LoginReq) returns (LoginResp)
+
+	@doc "cancel"
+	@handler cancel
+	post /user/cancel (CancelReq) returns (CancelResp)
+}
+
+// 用户注册时需携带参数
+type RegisterReq {
+	Username    string `json:"username" example:"用户名"`
+	Password    string `json:"password" example:"密码"`
+	NickName    string `json:"nickname" example:"昵称"`
+	HeaderImg   string `json:"headerimg,optional" example:"头像链接"`
+	AuthorityId uint   `json:"authorityid" example:"int 角色id"`
+	Phone       string `json:"phone" example:"电话号码"`
+	Email       string `json:"email" example:"电子邮箱"`
+}
+
+// 用户注册成功时所返回参数
+type RegisterResp {
+	Code    int64  `json:"code"`
+	Message string `json:"message"`
+}
+
+// 用户登录时需携带参数
+type LoginReq {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
+// 用户登录成功所返回参数
+type LoginResp {
+	NickName     string `json:"nickname"`
+	HeaderImg    string `json:"headerimg"`
+	AccessToken  string `json:"accessToken"`
+	AccessExpire int64  `json:"accessExpire"`
+}
+
+// 用户注销时需携带参数
+type CancelReq {
+	Username string `json:"username"`
+	Uuid     string `json:"uuid"`
+}
+
+// 用户注销时所返回参数
+type CancelResp {
+	Code    int64  `json:"code"`
+	Message string `json:"message"`
+}
+
