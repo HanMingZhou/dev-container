@@ -1,0 +1,16 @@
+Name: image
+Host: 0.0.0.0
+Port: 8889
+# mysql配置
+Mysql:
+  DataSource: root:123456@tcp(127.0.0.1:3306)/db1?charset=utf8mb4&parseTime=True&loc=Local
+
+# jwtAuth
+JwtAuth:
+  AccessSecret: ae0536f9-6450-4606-8e13-5a19ed505da0
+  AccessExpire: 7200
+
+Log:
+  ServiceName: file
+  Level: error
+  Encoding: plain

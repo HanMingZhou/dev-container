@@ -1,0 +1,42 @@
+syntax = "v1"
+
+// 获取用户镜像时需携带参数
+type getUserImageReq {
+	UserId int64 `json:"userid"`
+}
+
+// 获取个人镜像所返回参数
+type getMyImageResp {
+	ImageList interface{} `json:"imagelist"`
+}
+
+// 获取用户镜像所返回参数
+type getUserImageResp {
+	ImageList interface{} `json:"imagelist"`
+}
+
+// 获取所有镜像所返回参数
+type getAllImageResp {
+	ImageList interface{} `json:"imagelist"`
+}
+
+// 需要 jwt 认证登录状态
+@server (
+	prefix: image/v1
+	group:  image
+	jwt:    JwtAuth
+)
+service image {
+	@doc "getUserImage"
+	@handler getMyImage
+	post /images/getMyImage returns (getMyImageResp)
+
+	@doc "getUserImage"
+	@handler getUserImage
+	post /images/getUserImage (getUserImageReq) returns (getUserImageResp)
+
+	@doc "getAllImage"
+	@handler getAllImage
+	post /images/getAllImage returns (getAllImageResp)
+}
+
