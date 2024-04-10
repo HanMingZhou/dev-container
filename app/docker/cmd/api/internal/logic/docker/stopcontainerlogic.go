@@ -2,6 +2,9 @@ package docker
 
 import (
 	"context"
+	"go-zero-container/common/global/models"
+	"go-zero-container/common/utils/container"
+	"go.uber.org/zap"
 
 	"github.com/zeromicro/go-zero/core/logx"
 	"go-zero-container/app/docker/cmd/api/internal/svc"
@@ -21,8 +24,25 @@ func NewStopContainerLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Sto
 	}
 }
 
-func (l *StopContainerLogic) StopContainer() error {
+func (l *StopContainerLogic) StopContainer(req *models.ContainerReq) error {
 	// todo: add your logic here and delete this line
+	client, err := container.NewContainer()
+	if err != nil {
+		logx.Error("Portainer 初始化失败")
+		return err
+	}
+	// 遍历container.ids
+	for _, id := range req.Ids {
+		// 调用docker stop
+		// 目前默认endpointId = 2
+		err = client.StopContainer(req.EndpointId, id)
+		if err != nil {
+			logx.Error("停止Container失败", zap.Error(err), zap.String("ContainerId", id))
+			return err
+		}
+		logx.Info("停止Container成功", zap.String("容器id", id))
+	}
 
 	return nil
+
 }
