@@ -1,0 +1,68 @@
+syntax = "v1"
+
+info (
+	title:   "docker管理"
+	author:  "type author here"
+	email:   "type email here"
+	version: "type version here"
+)
+
+type CreateContainerResp {
+	Id int64 `json:"id"`
+}
+
+@server (
+	group:  docker
+	jwt:    JwtAuth
+	prefix: docker/v1
+)
+service docker {
+	@doc "创建容器"
+	@handler CreateContainer
+	post /createContainer returns (CreateContainerResp)
+
+	@doc "分页查询容器"
+	@handler GetContainerList
+	post /getContainerList
+
+	@doc "容器启动"
+	@handler StartContainer
+	post /startContainer
+
+	@doc "容器详情"
+	@handler InspectContainer
+	get /inspectContainer
+
+	@doc "容器暂停"
+	@handler StopContainer
+	post /stopContainer
+
+	@doc "容器重启"
+	@handler RestartContainer
+	post /restartContainer
+
+	@doc "更新容器名称"
+	@handler RenameContainer
+	post /renameContainer
+
+	@doc "更新容器重启策略"
+	@handler UpdateContainer
+	post /updateContainer
+
+	@doc "创建容器Exec"
+	@handler CreateContainerByExec
+	post /createContainerByExec returns (CreateContainerResp)
+
+	@doc "删除容器"
+	@handler DeleteContainerByIds
+	post /deleteContainerByIds
+
+	@doc "查看容器日志"
+	@handler GetContainerLogs
+	post /getContainerLogs
+
+	@doc "下载容器日志"
+	@handler DownloadContainerLogs
+	post /downloadContainerLogs
+}
+

@@ -1,0 +1,37 @@
+Name: docker
+Host: 0.0.0.0
+Port: 8890
+
+Log:
+  ServiceName: file
+  Level: error
+  Encoding: plain
+
+# 超时时间 60s,防止出现request timeout错误
+Timeout: 600000
+
+# mysql配置
+Mysql:
+  DataSource: root:123456@tcp(127.0.0.1:3306)/db1?charset=utf8mb4&parseTime=True&loc=Local
+
+
+# jwtAuth
+JwtAuth:
+  AccessSecret: ae0536f9-6450-4606-8e13-5a19ed505da0
+  AccessExpire: 7200
+
+#docker账户信息
+DockerAccount:
+  UserPasswd: USER_PASSWD
+  ConPrefix: sspaas
+
+
+Harbor:
+  Username: "admin"
+  Password: "Harbor12345"
+  Host: "192.168.0.78"
+  Official: "official"
+
+
+AES:
+  Key: "q+#@,6%ej-QP^ofs"

@@ -1,5 +1,11 @@
 syntax = "v1"
 
+info(
+	title: "image查看"
+	author: "type author here"
+	email: "type email here"
+	version: "type version here"
+)
 // 获取用户镜像时需携带参数
 type getUserImageReq {
 	UserId int64 `json:"userid"`
