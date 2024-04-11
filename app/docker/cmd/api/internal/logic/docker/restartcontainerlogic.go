@@ -26,6 +26,7 @@ func NewRestartContainerLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 
 func (l *RestartContainerLogic) RestartContainer(req *models.ContainerReq) error {
 	// todo: add your logic here and delete this line
+	// 初始化portainer
 	client, err := container.NewContainer()
 	if err != nil {
 		logx.Error("Portainer 初始化失败", zap.Error(err))
@@ -34,7 +35,7 @@ func (l *RestartContainerLogic) RestartContainer(req *models.ContainerReq) error
 	// 遍历container.ids
 	for _, id := range req.Ids {
 		// 重启容器
-		// 目前默认endpointId = 2
+		// 192.168.0.53 endpointId = 2
 		err = client.RestartContainer(req.EndpointId, id)
 		if err != nil {
 			logx.Error("重启容器失败", zap.Error(err), zap.String("container.id", id))

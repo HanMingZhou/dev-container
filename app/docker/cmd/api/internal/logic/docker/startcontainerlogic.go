@@ -33,6 +33,7 @@ func (l *StartContainerLogic) StartContainer(req *models.ContainerReq) error {
 	}
 	// 遍历container.ids
 	for _, id := range req.Ids {
+		// start a new container by 节点nodeID, 容器containerId
 		err = client.StartContainer(req.EndpointId, id)
 		if err != nil {
 			logx.Error("启动Container失败", zap.Error(err))

@@ -45,9 +45,9 @@ func (l *UpdateContainerLogic) UpdateContainer(req *models.UpdateReq, r *http.Re
 		logx.Error("更新Container重启策略body解析失败", zap.Error(err))
 		return err
 	}
-	// 获取节点ID BY http.request
+
+	// 获取节点ID,containerID by http.request
 	nodeId := r.URL.Query().Get("nodeId")
-	// 获取container ID BY http.request
 	conId := r.URL.Query().Get("conId")
 
 	// 更新restartPolicy

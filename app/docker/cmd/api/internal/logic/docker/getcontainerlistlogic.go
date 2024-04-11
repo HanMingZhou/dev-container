@@ -2,7 +2,6 @@ package docker
 
 import (
 	"context"
-	"fmt"
 	"github.com/pkg/errors"
 	"go-zero-container/common/global/models"
 	"go-zero-container/common/utils/container"
@@ -33,9 +32,11 @@ func (l *GetContainerListLogic) GetContainerList(req *models.ContainerSearch) (r
 	limit := req.PageSize
 	offset := req.PageSize * (req.Page - 1)
 
-	// 创建db
+	// 创建container db
 	db := l.svcCtx.DB.Model(&models.Container{})
+	// 容器列表, type: slice
 	var Cons []models.Container
+	// 查询数据库中符合条件的容器
 	if req.StartCreatedAt != "" && req.EndCreatedAt != "" {
 		layout := "2006-01-02 15:04:05"
 		startCreatedAt, err := time.Parse(layout, req.StartCreatedAt)
@@ -51,26 +52,29 @@ func (l *GetContainerListLogic) GetContainerList(req *models.ContainerSearch) (r
 		return
 	}
 
-	userUuid := fmt.Sprintf("%s", l.ctx.Value("UUID"))
+	// uuid从l.ctx中获取,从数据库中暂时赋予一个临时值
+	// userUuid := fmt.Sprintf("%s", l.ctx.Value("UUID"))
+	userUuid := ""
 	var total int64 = 0
 	err = db.Where("user_uuid = ?", userUuid).Count(&total).Error
-	fmt.Println("err=", err)
 	logx.Error("userUuid:", userUuid)
+	// 从table container中获取所有的容器,并写入到cons中
 	err = db.Where("user_uuid = ?", userUuid).Limit(limit).Offset(offset).Find(&Cons).Error
 	if err != nil {
 		logx.Error("获取Container列表失败", zap.Error(err))
 		return
 	}
-
 	if len(Cons) == 0 {
 		return nil, err
 	}
+	// 查看容器的状态
 	containersStatus, err := l.GetContainersStatusByUUID(Cons)
 	if err != nil {
 		logx.Error("获取Container-状态map失败", zap.Error(err))
 		return
 	}
 	var list []models.Container
+	// 遍历所有的cons,并从portainer中获取对应的state
 	for _, con := range Cons {
 		result := strings.Split(con.Image, "/")
 		//if result[len(result)-2] == l.svcCtx.Config.Harbor.Official {
@@ -99,7 +103,6 @@ func (l *GetContainerListLogic) GetContainersStatusByUUID(list []models.Containe
 	for _, v := range list {
 		nodeIds[v.NodeId] = append(nodeIds[v.NodeId], v.ContainerId)
 	}
-
 	// 2、查找所有节点的容器(调用portainer)
 	// 2.1、初始化portainer
 	client, err := container.NewContainer()
@@ -107,12 +110,14 @@ func (l *GetContainerListLogic) GetContainersStatusByUUID(list []models.Containe
 		logx.Error("Portainer认证失败", zap.Error(err))
 		return nil, err
 	}
+	// 2.2、遍历所有节点下的所有容器
 	for nodeId, cons := range nodeIds {
 		containers, err := client.ListTargetContainers(nodeId, cons)
 		if err != nil {
 			logx.Error("获取containers失败", zap.Error(err))
 			return nil, err
 		}
+		// 2.3、 遍历容器的state
 		for _, c := range containers {
 			containersStatus[c.ID] = c.State
 		}

@@ -55,13 +55,17 @@ func (p *Portainer) makeRequest(t string, url string, body io.Reader, args map[s
 		logx.Error("创建http请求 error", zap.Error(err))
 		return nil, err
 	}
+
+	// request header 增加 authorization, x-api-key, content-type
+	logx.Info("创建http请求时,p.token:", p.Token)
 	req.Header.Add("Authorization", "Bearer "+p.Token)
 	req.Header.Add("X-API-Key", p.Token)
 	logx.Error("x-api-key:", p.Token)
 	logx.Error("requestBody:", body)
 	req.Header.Add("Content-Type", "application/json")
-	fmt.Println("p.authtoken=", p.AuthToken)
 	c := &http.Client{}
+
+	// Do sends an HTTP request and returns an HTTP response
 	return c.Do(req)
 }
 
@@ -96,26 +100,37 @@ func (p *Portainer) makeRequestToken(t string, url string, body io.Reader, args 
  **/
 func (p *Portainer) Auth() error {
 	authData := make(map[string]string)
+	// 获取portainer username password
 	authData["Username"] = p.Config.User
 	authData["Password"] = p.Config.Password
+	// Marshal用于将数据结构转换为 JSON 格式的字节序列
 	payload, err := json.Marshal(&authData)
+	// post请求：
 	res, err := http.Post(p.ApiURL+"/auth", "application/json", bytes.NewReader(payload))
 	if err != nil {
 		log.Error("访问/auth失败", zap.Error(err))
 		return err
 	}
+	// 判断http请求的结果
 	if res.StatusCode != http.StatusOK {
 		return errors.New("unauthorized")
 	}
+	// http请求的body convert to 切片
 	jwtString, err := ioutil.ReadAll(res.Body)
+	logx.Info("jwt string: ", jwtString)
 	_ = res.Body.Close()
 	if err != nil {
 		log.Error("jwt转换失败", zap.Error(err))
 		return err
 	}
+
+	//	parse json-encoded data to map
+	logx.Info("before parse json-encoded data to map, p.token=", p.Token)
 	jwtData := make(map[string]string)
 	_ = json.Unmarshal(jwtString, &jwtData)
 	p.Token = jwtData["jwt"]
+	logx.Info("after parse json-encoded data to p.token", p.Token)
+
 	return err
 }
 
@@ -530,7 +545,7 @@ func (p *Portainer) InspectContainer(e int32, id string) (*Inspect, error) {
 		logx.Error("容器inspect error", zap.Error(err))
 		return nil, err
 	}
-	// JSON 数据解析到 inspect 变量所指向的数据结构中
+	// Json-encoded数据解析到inspect结构体中
 	err = json.Unmarshal(data, &inspect)
 	return &inspect, nil
 }

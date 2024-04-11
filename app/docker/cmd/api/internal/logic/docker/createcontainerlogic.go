@@ -38,19 +38,26 @@ func NewCreateContainerLogic(ctx context.Context, svcCtx *svc.ServiceContext) *C
 
 func (l *CreateContainerLogic) CreateContainer(req *common_models.CreateContainerReq, r *http.Request) (resp *types.CreateContainerResp, err error) {
 	// todo: add your logic here and delete this line
-	//从 jwt 中解析用户信息
-	userName := fmt.Sprintf("%s", l.ctx.Value("Username"))
-	userUuid := fmt.Sprintf("%s", l.ctx.Value("UUID"))
+	// 从jwt中解析用户信息： l.ctx中获取，暂时从数据库中赋予临时值
+	// userName := fmt.Sprintf("%s", l.ctx.Value("Username"))
+	// userUuid := fmt.Sprintf("%s", l.ctx.Value("UUID"))
+	userName := ""
+	userUuid := ""
 
+	// uid, conID暂时不用取值
 	//uid := fmt.Sprintf("%s", l.ctx.Value("ID"))
 	//conID := r.URL.Query().Get("conId")
+
+	// 节点ID, gpuNum 通过http.request时自行加入参数
 	nodeInt, err := strconv.Atoi(r.URL.Query().Get("nodeId"))
 	gpuNum, err := strconv.Atoi(r.URL.Query().Get("gpuNum"))
 	logx.Error("nodeInt:", nodeInt, " gpuNum:", gpuNum)
-	// 判断是否是管理员
-	//if userName == "admin" {
-	//	return nil, errors.New("管理员不允许创建容器")
-	//}
+
+	// 判断username是否是管理员
+	if userName == "admin" {
+		return nil, errors.New("管理员不允许创建容器")
+	}
+
 	// 1 *判断容器名称是否重复
 	var dataCon common_models.Container
 	if !errors.Is(l.svcCtx.DB.Where("containe_name = ? and user_uuid = ?", req.Name, userUuid).First(&dataCon).Error, gorm.ErrRecordNotFound) {
@@ -58,6 +65,7 @@ func (l *CreateContainerLogic) CreateContainer(req *common_models.CreateContaine
 		logx.Error("容器名称已创建：", " containe_name:", req.Name, " user_uuid:", userUuid)
 		return nil, errors.New("容器名称已创建")
 	}
+
 	// 7 *判断ENV——“USER_PASSWD”是否为空，否则 创建8位的随机密码
 	env := req.Env
 	var passwd string
@@ -71,7 +79,6 @@ func (l *CreateContainerLogic) CreateContainer(req *common_models.CreateContaine
 			return nil, errors.New("密码包含数字和字母，长度6-18位")
 		}
 		passwd = word
-
 	} else {
 		passwd, err = mapset.GenerateRandomString(8)
 		if err != nil {
@@ -91,7 +98,7 @@ func (l *CreateContainerLogic) CreateContainer(req *common_models.CreateContaine
 	//	logx.Error("创建容器-获取节点信息失败", zap.Error(err))
 	//	return nil, err
 	//}
-	nodeInt = 2
+
 	// 7.7 根据GPU个数绑定GPU
 	gpus := make([]string, 0)
 	if gpuNum > 0 {
@@ -118,7 +125,7 @@ func (l *CreateContainerLogic) CreateContainer(req *common_models.CreateContaine
 		logx.Error("Portainer认证失败", zap.Error(err))
 		return nil, err
 	}
-	// 创建
+	// 开始创建容器
 	_, err, rsp := client.CreateContainer(int32(nodeInt), &buf, args)
 	if err != nil {
 		logx.Error("创建容器失败1", zap.Error(err))
@@ -144,7 +151,6 @@ func (l *CreateContainerLogic) CreateContainer(req *common_models.CreateContaine
 	err = l.svcCtx.DB.Create(&dataCon).Error
 	if err != nil {
 		logx.Error("创建容器失败2", zap.Error(err))
-
 		return nil, errors.New(err.Error())
 	}
 
