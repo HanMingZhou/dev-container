@@ -33,8 +33,14 @@ func (l *StopContainerLogic) StopContainer(req *models.ContainerReq) error {
 	}
 	// 遍历container.ids
 	for _, id := range req.Ids {
-		// 调用docker stop
-		// 目前默认endpointId = 2
+
+		// 端口回收
+		//innerErr := ConServiceV2.PortRecovery(id)
+		//if innerErr != nil && innerErr.Error() != "端口回收-容器无可回收端口" {
+		//	logx.Error("端口回收失败", zap.Error(innerErr), zap.String("ContainerId", id))
+		//	return innerErr
+		//}
+		//logx.Info("端口操作完成", zap.String("容器id", id))
 		err = client.StopContainer(req.EndpointId, id)
 		if err != nil {
 			logx.Error("停止Container失败", zap.Error(err), zap.String("ContainerId", id))
@@ -42,7 +48,6 @@ func (l *StopContainerLogic) StopContainer(req *models.ContainerReq) error {
 		}
 		logx.Info("停止Container成功", zap.String("容器id", id))
 	}
-
 	return nil
 
 }

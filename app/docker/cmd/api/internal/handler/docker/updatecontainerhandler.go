@@ -1,6 +1,8 @@
 package docker
 
 import (
+	"go-zero-container/common/global/models"
+	"go-zero-container/common/result"
 	"net/http"
 
 	"github.com/zeromicro/go-zero/rest/httpx"
@@ -10,12 +12,13 @@ import (
 
 func UpdateContainerHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		l := docker.NewUpdateContainerLogic(r.Context(), svcCtx)
-		err := l.UpdateContainer()
-		if err != nil {
+		var req models.UpdateReq
+		if err := httpx.Parse(r, &req); err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)
-		} else {
-			httpx.Ok(w)
+			return
 		}
+		l := docker.NewUpdateContainerLogic(r.Context(), svcCtx)
+		err := l.UpdateContainer(&req, r)
+		result.HttpResult(r, w, nil, err)
 	}
 }

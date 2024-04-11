@@ -44,7 +44,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Handler: docker.GetContainerLogsHandler(serverCtx),
 			},
 			{
-				Method:  http.MethodGet,
+				Method:  http.MethodPost,
 				Path:    "/inspectContainer",
 				Handler: docker.InspectContainerHandler(serverCtx),
 			},

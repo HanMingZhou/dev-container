@@ -60,6 +60,7 @@ func (p *Portainer) makeRequest(t string, url string, body io.Reader, args map[s
 	logx.Error("x-api-key:", p.Token)
 	logx.Error("requestBody:", body)
 	req.Header.Add("Content-Type", "application/json")
+	fmt.Println("p.authtoken=", p.AuthToken)
 	c := &http.Client{}
 	return c.Do(req)
 }
@@ -99,6 +100,7 @@ func (p *Portainer) Auth() error {
 	authData["Password"] = p.Config.Password
 	// Marshal用于将数据结构转换为 JSON 格式的字节序列
 	payload, err := json.Marshal(&authData)
+	fmt.Println("payload", payload)
 	res, err := http.Post(p.ApiURL+"/auth", "application/json", bytes.NewReader(payload))
 	if err != nil {
 		logx.Error("访问/auth失败", zap.Error(err))

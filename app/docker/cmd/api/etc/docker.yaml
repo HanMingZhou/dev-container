@@ -12,7 +12,8 @@ Timeout: 600000
 
 # mysql配置
 Mysql:
-  DataSource: root:123456@tcp(127.0.0.1:3306)/db1?charset=utf8mb4&parseTime=True&loc=Local
+  #DataSource: root:Sspaas@1233@tcp(192.168.0.78:32770)/gpu_platform?charset=utf8mb4&parseTime=true&loc=Asia%2FShanghai
+  DataSource: root:123456@tcp(127.0.0.1:3306)/db1?charset=utf8mb4&parseTime=true&loc=Local
 
 
 # jwtAuth

@@ -54,6 +54,7 @@ func (l *GetContainerListLogic) GetContainerList(req *models.ContainerSearch) (r
 	userUuid := fmt.Sprintf("%s", l.ctx.Value("UUID"))
 	var total int64 = 0
 	err = db.Where("user_uuid = ?", userUuid).Count(&total).Error
+	fmt.Println("err=", err)
 	logx.Error("userUuid:", userUuid)
 	err = db.Where("user_uuid = ?", userUuid).Limit(limit).Offset(offset).Find(&Cons).Error
 	if err != nil {

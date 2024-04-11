@@ -10,6 +10,7 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/satori/go.uuid v1.2.0
 	github.com/sirupsen/logrus v1.9.3
+	github.com/spf13/cast v1.6.0
 	github.com/zeromicro/go-zero v1.6.3
 	go.uber.org/zap v1.24.0
 	google.golang.org/grpc v1.63.2

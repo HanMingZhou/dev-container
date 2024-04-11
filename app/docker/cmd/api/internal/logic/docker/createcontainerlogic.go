@@ -41,15 +41,17 @@ func (l *CreateContainerLogic) CreateContainer(req *common_models.CreateContaine
 	//从 jwt 中解析用户信息
 	userName := fmt.Sprintf("%s", l.ctx.Value("Username"))
 	userUuid := fmt.Sprintf("%s", l.ctx.Value("UUID"))
+	//userName := "jakc"
+	//userUuid := "4a04d55b-adef-4a7d-8dd0-b1724799202a"
 	//uid := fmt.Sprintf("%s", l.ctx.Value("ID"))
 	//conID := r.URL.Query().Get("conId")
 	nodeInt, err := strconv.Atoi(r.URL.Query().Get("nodeId"))
 	gpuNum, err := strconv.Atoi(r.URL.Query().Get("gpuNum"))
 	logx.Error("nodeInt:", nodeInt, " gpuNum:", gpuNum)
 	// 判断是否是管理员
-	if userName == "admin" {
-		return nil, errors.New("管理员不允许创建容器")
-	}
+	//if userName == "admin" {
+	//	return nil, errors.New("管理员不允许创建容器")
+	//}
 	// 1 *判断容器名称是否重复
 	var dataCon common_models.Container
 	if !errors.Is(l.svcCtx.DB.Where("containe_name = ? and user_uuid = ?", req.Name, userUuid).First(&dataCon).Error, gorm.ErrRecordNotFound) {
@@ -85,12 +87,12 @@ func (l *CreateContainerLogic) CreateContainer(req *common_models.CreateContaine
 
 	// 7.5创建容器-创建nfs卷
 	// 通过节点id获取节点ip
-	var nodeInfo common_models.Node
-	if err := l.svcCtx.DB.Where("portainer_id = ?", nodeInt).First(&nodeInfo).Error; err != nil {
-		logx.Error("创建容器-获取节点信息失败", zap.Error(err))
-		return nil, err
-	}
-
+	//var nodeInfo common_models.Node
+	//if err := l.svcCtx.DB.Where("portainer_id = ?", nodeInt).First(&nodeInfo).Error; err != nil {
+	//	logx.Error("创建容器-获取节点信息失败", zap.Error(err))
+	//	return nil, err
+	//}
+	nodeInt = 2
 	// 7.7 根据GPU个数绑定GPU
 	gpus := make([]string, 0)
 	if gpuNum > 0 {
