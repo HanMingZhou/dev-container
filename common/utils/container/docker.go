@@ -23,20 +23,14 @@ type Portainer struct {
 func NewContainer() (*Portainer, error) {
 	client := NewPortainer(&Portainer{
 		Config: ContainerCon{
-			Host:     "192.168.0.78",
+			//Host:     "192.168.0.78",
+			Host:     "192.168.0.53",
 			Port:     9000,
 			Schema:   "http",
 			User:     "admin",
 			Password: "cDfQtt2FQgvuHXz",
 			URL:      "/api",
-			Token:    "ptr_dYLQ0l1yjyBMRl6Aa6UlNsC9oWFcUz/EhjDUGZmbBtk=",
-			//Host:     "192.168.0.53",
-			//Port:     9000,
-			//Schema:   "http",
-			//User:     "admin",
-			//Password: "cDfQtt2FQgvuHXz",
-			//URL:      "/api",
-			//Token:    "ptr_dYLQ0l1yjyBMRl6Aa6UlNsC9oWFcUz/EhjDUGZmbBtk=",
+			Token:    "ptr_FzuDBJ3zMueL7gRbCCGfY7yaavdNOxEIGUdEzJYKGV0=",
 		},
 	})
 	err := client.Auth()

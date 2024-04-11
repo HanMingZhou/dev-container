@@ -41,8 +41,7 @@ func (l *CreateContainerLogic) CreateContainer(req *common_models.CreateContaine
 	//从 jwt 中解析用户信息
 	userName := fmt.Sprintf("%s", l.ctx.Value("Username"))
 	userUuid := fmt.Sprintf("%s", l.ctx.Value("UUID"))
-	//userName := "jakc"
-	//userUuid := "4a04d55b-adef-4a7d-8dd0-b1724799202a"
+
 	//uid := fmt.Sprintf("%s", l.ctx.Value("ID"))
 	//conID := r.URL.Query().Get("conId")
 	nodeInt, err := strconv.Atoi(r.URL.Query().Get("nodeId"))

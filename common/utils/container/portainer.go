@@ -55,7 +55,7 @@ func (p *Portainer) makeRequest(t string, url string, body io.Reader, args map[s
 		logx.Error("创建http请求 error", zap.Error(err))
 		return nil, err
 	}
-	//req.Header.Add("Authorization", "Bearer "+p.Token)
+	req.Header.Add("Authorization", "Bearer "+p.Token)
 	req.Header.Add("X-API-Key", p.Token)
 	logx.Error("x-api-key:", p.Token)
 	logx.Error("requestBody:", body)
@@ -98,12 +98,10 @@ func (p *Portainer) Auth() error {
 	authData := make(map[string]string)
 	authData["Username"] = p.Config.User
 	authData["Password"] = p.Config.Password
-	// Marshal用于将数据结构转换为 JSON 格式的字节序列
 	payload, err := json.Marshal(&authData)
-	fmt.Println("payload", payload)
 	res, err := http.Post(p.ApiURL+"/auth", "application/json", bytes.NewReader(payload))
 	if err != nil {
-		logx.Error("访问/auth失败", zap.Error(err))
+		log.Error("访问/auth失败", zap.Error(err))
 		return err
 	}
 	if res.StatusCode != http.StatusOK {
@@ -112,16 +110,12 @@ func (p *Portainer) Auth() error {
 	jwtString, err := ioutil.ReadAll(res.Body)
 	_ = res.Body.Close()
 	if err != nil {
-		logx.Error("jwt转换失败", zap.Error(err))
+		log.Error("jwt转换失败", zap.Error(err))
 		return err
 	}
 	jwtData := make(map[string]string)
 	_ = json.Unmarshal(jwtString, &jwtData)
-
-	// 这里若不修改则为jwt，发送创建容器请求时，Auth认证失败
-	//p.Token = jwtData["jwt"]
-	p.Token = p.Config.Token
-	p.AuthToken = jwtData["jwt"]
+	p.Token = jwtData["jwt"]
 	return err
 }
 
