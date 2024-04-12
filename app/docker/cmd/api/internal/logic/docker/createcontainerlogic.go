@@ -38,11 +38,11 @@ func NewCreateContainerLogic(ctx context.Context, svcCtx *svc.ServiceContext) *C
 
 func (l *CreateContainerLogic) CreateContainer(req *common_models.CreateContainerReq, r *http.Request) (resp *types.CreateContainerResp, err error) {
 	// todo: add your logic here and delete this line
-	// 从jwt中解析用户信息： l.ctx中获取，暂时从数据库中赋予临时值
-	// userName := fmt.Sprintf("%s", l.ctx.Value("Username"))
-	// userUuid := fmt.Sprintf("%s", l.ctx.Value("UUID"))
-	userName := ""
-	userUuid := ""
+	// 从jwt中解析用户信息： l.ctx中获取
+	userName := fmt.Sprintf("%s", l.ctx.Value("Username"))
+	userUuid := fmt.Sprintf("%s", l.ctx.Value("UUID"))
+	logx.Error("userNmame", userName)
+	logx.Error("userUuid", userUuid)
 
 	// uid, conID暂时不用取值
 	//uid := fmt.Sprintf("%s", l.ctx.Value("ID"))
@@ -58,7 +58,7 @@ func (l *CreateContainerLogic) CreateContainer(req *common_models.CreateContaine
 		return nil, errors.New("管理员不允许创建容器")
 	}
 
-	// 1 *判断容器名称是否重复
+	// 1 *
 	var dataCon common_models.Container
 	if !errors.Is(l.svcCtx.DB.Where("containe_name = ? and user_uuid = ?", req.Name, userUuid).First(&dataCon).Error, gorm.ErrRecordNotFound) {
 		logx.Error("创建容器-容器名称已创建", zap.Error(err))
@@ -171,6 +171,7 @@ func (l *CreateContainerLogic) CreateContainer(req *common_models.CreateContaine
 func (l *CreateContainerLogic) GetAvailableGPU(node int32, gpuNum int) (gpus []string, err error) {
 	// 工具方法：查找可用GPU 根据节点id、所需数量
 	// 1.查找可用GPU used=0 为未使用
+	l.svcCtx.DB.Where("node_id = ? and used = ?", node, 0).Model(&common_models.GpuMonitor{}).Pluck("uuid", &gpus)
 	if err = l.svcCtx.DB.Where("node_id = ? and used = ?", node, 0).Model(&common_models.GpuMonitor{}).Pluck("uuid", &gpus).Error; err != nil {
 		logx.Error("查找可用GPU失败", zap.Error(err))
 		return nil, err

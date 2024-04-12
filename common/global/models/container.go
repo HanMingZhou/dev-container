@@ -32,9 +32,9 @@ type Container struct {
 }
 
 type ContainerSearch struct {
-	StartCreatedAt string `json:"startCreatedAt,optional" form:"startCreatedAt,optional"`
-	EndCreatedAt   string `json:"endCreatedAt,optional" form:"endCreatedAt,optional"`
-	PageInfo
+	StartCreatedAt string   `json:"startCreatedAt,optional" form:"startCreatedAt,optional"`
+	EndCreatedAt   string   `json:"endCreatedAt,optional" form:"endCreatedAt,optional"`
+	Pageinfo       PageInfo `json:"pageinfo,optional"`
 }
 
 type GetContainerListResp struct {

@@ -2,6 +2,7 @@ package docker
 
 import (
 	"context"
+	"fmt"
 	"github.com/pkg/errors"
 	"go-zero-container/common/global/models"
 	"go-zero-container/common/utils/container"
@@ -29,13 +30,15 @@ func NewGetContainerListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 
 func (l *GetContainerListLogic) GetContainerList(req *models.ContainerSearch) (resp *models.GetContainerListResp, err error) {
 	// todo: add your logic here and delete this line
-	limit := req.PageSize
-	offset := req.PageSize * (req.Page - 1)
+
+	limit := req.Pageinfo.Page
+	offset := req.Pageinfo.PageSize
+	logx.Error("page", limit)
+	logx.Error("offset", offset)
 
 	// 创建container db
 	db := l.svcCtx.DB.Model(&models.Container{})
-	// 容器列表, type: slice
-	var Cons []models.Container
+
 	// 查询数据库中符合条件的容器
 	if req.StartCreatedAt != "" && req.EndCreatedAt != "" {
 		layout := "2006-01-02 15:04:05"
@@ -52,21 +55,28 @@ func (l *GetContainerListLogic) GetContainerList(req *models.ContainerSearch) (r
 		return
 	}
 
-	// uuid从l.ctx中获取,从数据库中暂时赋予一个临时值
-	// userUuid := fmt.Sprintf("%s", l.ctx.Value("UUID"))
-	userUuid := ""
+	// uuid从l.ctx中获取,如果不用jwt token中获取uuid，则从数据库中暂时赋予一个临时值
+	userUuid := fmt.Sprintf("%s", l.ctx.Value("UUID"))
+
 	var total int64 = 0
 	err = db.Where("user_uuid = ?", userUuid).Count(&total).Error
+	// 输出查询结果
 	logx.Error("userUuid:", userUuid)
+	logx.Error("total:", total)
+
 	// 从table container中获取所有的容器,并写入到cons中
+	// 容器列表, type: slice
+	var Cons []models.Container
 	err = db.Where("user_uuid = ?", userUuid).Limit(limit).Offset(offset).Find(&Cons).Error
 	if err != nil {
 		logx.Error("获取Container列表失败", zap.Error(err))
 		return
 	}
 	if len(Cons) == 0 {
-		return nil, err
+		logx.Error("容器列表为:", len(Cons))
+		//return nil, err
 	}
+
 	// 查看容器的状态
 	containersStatus, err := l.GetContainersStatusByUUID(Cons)
 	if err != nil {
@@ -88,11 +98,14 @@ func (l *GetContainerListLogic) GetContainerList(req *models.ContainerSearch) (r
 		list = append(list, con)
 	}
 
+	// 控制台输出
+	fmt.Printf("container list: %v", list)
+
 	return &models.GetContainerListResp{
 		Total:         total,
 		ContainerList: list,
-		Page:          req.Page,
-		PageSize:      req.PageSize,
+		Page:          req.Pageinfo.Page,
+		PageSize:      req.Pageinfo.PageSize,
 	}, nil
 }
 func (l *GetContainerListLogic) GetContainersStatusByUUID(list []models.Container) (containersStatus map[string]string, err error) {

@@ -21,8 +21,8 @@ Mysql:
 
 # jwtAuth
 JwtAuth:
-  AccessSecret: ae0536f9-6450-4606-8e13-5a19ed505da0
-  AccessExpire: 31536000
+  AccessSecret: c02dkk3f-094y-59d5-bi98-f1s543daca3d
+  AccessExpire: 18000000
 
 
 # harbor

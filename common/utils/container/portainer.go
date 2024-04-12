@@ -56,8 +56,15 @@ func (p *Portainer) makeRequest(t string, url string, body io.Reader, args map[s
 		return nil, err
 	}
 
-	// request header 增加 authorization, x-api-key, content-type
-	logx.Info("创建http请求时,p.token:", p.Token)
+	//// request header 增加 authorization, x-api-key, content-type
+	//logx.Info("创建http请求时,p.token:", p.Token)
+	////req.Header.Add("Authorization", "Bearer "+p.Token) //header.Authorization参数请求时添加
+	//req.Header.Add("X-API-Key", p.Token)
+	//logx.Error("x-api-key:", p.Token)
+	//logx.Error("requestBody:", body)
+	//req.Header.Add("Content-Type", "application/json")
+	//c := &http.Client{}
+
 	req.Header.Add("Authorization", "Bearer "+p.Token)
 	req.Header.Add("X-API-Key", p.Token)
 	logx.Error("x-api-key:", p.Token)
@@ -84,10 +91,10 @@ func (p *Portainer) makeRequestToken(t string, url string, body io.Reader, args 
 		logx.Error("创建http请求 error", zap.Error(err))
 		return nil, err
 	}
-	req.Header.Add("Authorization", "Bearer "+p.AuthToken)
+	req.Header.Add("Authorization", "Bearer "+p.Token)
 	logx.Error("ExecCreateRequestToken:", p.Token)
-	logx.Error("ExecCreateRequestAuthToken:", p.AuthToken)
-	//req.Header.Add("X-API-Key", p.Token)
+	logx.Error("ExecCreateRequestAuthToken:", p.Token)
+	req.Header.Add("X-API-Key", p.Token)
 	req.Header.Add("Content-Type", "application/json")
 	c := &http.Client{}
 	return c.Do(req)
@@ -128,9 +135,18 @@ func (p *Portainer) Auth() error {
 	logx.Info("before parse json-encoded data to map, p.token=", p.Token)
 	jwtData := make(map[string]string)
 	_ = json.Unmarshal(jwtString, &jwtData)
-	p.Token = jwtData["jwt"]
-	logx.Info("after parse json-encoded data to p.token", p.Token)
+	//// 这里若不修改则为jwt，发送创建容器请求时，Auth认证失败
+	//p.Token = jwtData["jwt"]
+	////p.Token = p.Config.Token
+	////p.AuthToken = jwtData["jwt"]
+	//logx.Info("after parse json-encoded data to p.token", p.Token)
+	//
+	//return err
 
+	// 这里若不修改则为jwt，发送创建容器请求时，Auth认证失败
+	p.Token = jwtData["jwt"]
+	//p.Token = p.Config.Token
+	//p.AuthToken = jwtData["jwt"]
 	return err
 }
 
