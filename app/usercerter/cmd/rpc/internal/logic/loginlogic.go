@@ -3,11 +3,10 @@ package logic
 import (
 	"context"
 	"errors"
-	common_models "go-zero-container/common/global/models"
-	jwt_token "go-zero-container/common/jwt-token"
-
 	"go-zero-container/app/usercerter/cmd/rpc/internal/svc"
 	"go-zero-container/app/usercerter/cmd/rpc/pb/pb"
+	common_models "go-zero-container/common/global/models"
+	jwt_token "go-zero-container/common/jwt-token"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -42,11 +41,9 @@ func (l *LoginLogic) Login(in *pb.LoginReq) (*pb.LoginResp, error) {
 
 	// 加载 jwt 相关配置
 	gtr, err := jwt_token.GenerateToken(user)
-
 	if err != nil {
 		return nil, errors.New("创建jwt失败，请稍后重试")
 	}
-
 	return &pb.LoginResp{
 		NickName:     user.NickName,
 		HeaderImg:    user.HeaderImg,
