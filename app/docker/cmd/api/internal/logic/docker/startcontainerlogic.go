@@ -26,12 +26,13 @@ func NewStartContainerLogic(ctx context.Context, svcCtx *svc.ServiceContext) *St
 
 func (l *StartContainerLogic) StartContainer(req *models.ContainerReq) error {
 	// todo: add your logic here and delete this line
+	// 0 初始化portainer
 	client, err := container.NewContainer()
 	if err != nil {
 		logx.Error("Portainer初始化失败", zap.Error(err))
 		return err
 	}
-	// 遍历container.ids
+	// 1 遍历container.ids
 	for _, id := range req.Ids {
 		// start a new container by 节点nodeID, 容器containerId
 		err = client.StartContainer(req.EndpointId, id)

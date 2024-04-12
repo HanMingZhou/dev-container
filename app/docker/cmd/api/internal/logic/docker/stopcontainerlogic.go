@@ -26,12 +26,13 @@ func NewStopContainerLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Sto
 
 func (l *StopContainerLogic) StopContainer(req *models.ContainerReq) error {
 	// todo: add your logic here and delete this line
+	// 0 初始化portainer
 	client, err := container.NewContainer()
 	if err != nil {
 		logx.Error("Portainer 初始化失败")
 		return err
 	}
-	// 遍历container.ids
+	// 1 遍历container.ids
 	for _, id := range req.Ids {
 
 		// 端口回收

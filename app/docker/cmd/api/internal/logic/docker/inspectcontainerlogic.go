@@ -28,21 +28,21 @@ func NewInspectContainerLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 func (l *InspectContainerLogic) InspectContainer(req *models.InspContainerReq) (resp *container.Inspect, err error) {
 	// todo: add your logic here and delete this line
 	nodeId := cast.ToInt32(req.Node)
-	// 查看容器是否存在 查询Mysql
+	// 0 查看容器是否存在 查询Mysql
 	if err := l.svcCtx.DB.Where("container_id = ?", req.ContainerId).First(&models.Container{}).Error; err != nil {
 		logx.Error("检查容器-查找容器失败", zap.Error(err))
 		// 目前连接本地数据库,存在查找容器id失败的情况,暂不处理
-		//return nil, err
+		return nil, err
 	}
 
-	// 初始化portainer
+	// 1 初始化portainer
 	client, err := container.NewContainer()
 	if err != nil {
 		logx.Error("Portainer认证失败", zap.Error(err))
 		return nil, err
 	}
 
-	// 调用InspectContainer
+	// 2 调用InspectContainer
 	resp, err = client.InspectContainer(nodeId, req.ContainerId)
 	if err != nil {
 		logx.Error("Portainer检查Container失败", zap.Error(err))

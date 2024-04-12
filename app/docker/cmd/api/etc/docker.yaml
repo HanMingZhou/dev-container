@@ -20,6 +20,7 @@ Mysql:
 JwtAuth:
   AccessSecret: c02dkk3f-094y-59d5-bi98-f1s543daca3d
   AccessExpire: 18000000
+  # 单位millisecond
 
 #docker账户信息
 DockerAccount:
@@ -36,3 +37,7 @@ Harbor:
 
 AES:
   Key: "q+#@,6%ej-QP^ofs"
+
+# logs文件保存路径
+LogPath:
+  Path: C:\Users\tian3\Desktop

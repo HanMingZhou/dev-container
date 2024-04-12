@@ -12,6 +12,7 @@ type GenTokenResq struct {
 	AccessExpire int64
 }
 
+// 登陆时,获取jwt access secret，修改yaml文件时,主要要修改这里
 func NewToken() *GenTokenResq {
 	return &GenTokenResq{
 		AccessSecret: "c02dkk3f-094y-59d5-bi98-f1s543daca3d",

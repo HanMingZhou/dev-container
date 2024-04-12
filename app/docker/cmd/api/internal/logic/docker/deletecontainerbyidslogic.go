@@ -56,6 +56,7 @@ func (l *DeleteContainerByIdsLogic) CheckContainerOwner(username string, contain
 			return fmt.Errorf("该容器不属于该节点")
 		}
 	}
+
 	// 4 检查容器所有权
 	var user models.SysUser
 	logx.Error("username", "username")

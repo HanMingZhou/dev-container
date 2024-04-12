@@ -29,4 +29,7 @@ type Config struct {
 	AES struct {
 		Key string
 	}
+	LogPath struct {
+		Path string
+	}
 }

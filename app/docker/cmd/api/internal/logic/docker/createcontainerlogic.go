@@ -38,7 +38,8 @@ func NewCreateContainerLogic(ctx context.Context, svcCtx *svc.ServiceContext) *C
 
 func (l *CreateContainerLogic) CreateContainer(req *common_models.CreateContainerReq, r *http.Request) (resp *types.CreateContainerResp, err error) {
 	// todo: add your logic here and delete this line
-	// 从jwt中解析用户信息： l.ctx中获取
+
+	// 1 从jwt中解析用户信息:  即l.ctx中获取
 	userName := fmt.Sprintf("%s", l.ctx.Value("Username"))
 	userUuid := fmt.Sprintf("%s", l.ctx.Value("UUID"))
 	logx.Error("userNmame", userName)
@@ -58,7 +59,7 @@ func (l *CreateContainerLogic) CreateContainer(req *common_models.CreateContaine
 		return nil, errors.New("管理员不允许创建容器")
 	}
 
-	// 1 *
+	// 2 查询container name 是否已经创建
 	var dataCon common_models.Container
 	if !errors.Is(l.svcCtx.DB.Where("containe_name = ? and user_uuid = ?", req.Name, userUuid).First(&dataCon).Error, gorm.ErrRecordNotFound) {
 		logx.Error("创建容器-容器名称已创建", zap.Error(err))
@@ -66,12 +67,11 @@ func (l *CreateContainerLogic) CreateContainer(req *common_models.CreateContaine
 		return nil, errors.New("容器名称已创建")
 	}
 
-	// 7 *判断ENV——“USER_PASSWD”是否为空，否则 创建8位的随机密码
+	// 3 判断ENV——“USER_PASSWD”是否为空，否则 创建8位的随机密码
 	env := req.Env
 	var passwd string
 	var userPasswd = l.svcCtx.Config.DockerAccount.UserPasswd
 	statu, word := mapset.InSlice(env, userPasswd)
-
 	if statu {
 		//密码校验
 		if !utils.RegexpPlas("^(?=.*[a-zA-Z])(?=.*\\d)[a-zA-Z\\d]{6,18}$", word) {
@@ -91,15 +91,15 @@ func (l *CreateContainerLogic) CreateContainer(req *common_models.CreateContaine
 
 	args := make(map[string]string)
 
-	// 7.5创建容器-创建nfs卷
+	// 4 创建容器-创建nfs卷 TODO
 	// 通过节点id获取节点ip
-	//var nodeInfo common_models.Node
-	//if err := l.svcCtx.DB.Where("portainer_id = ?", nodeInt).First(&nodeInfo).Error; err != nil {
-	//	logx.Error("创建容器-获取节点信息失败", zap.Error(err))
-	//	return nil, err
-	//}
+	// var nodeInfo common_models.Node
+	// if err := l.svcCtx.DB.Where("portainer_id = ?", nodeInt).First(&nodeInfo).Error; err != nil {
+	// logx.Error("创建容器-获取节点信息失败", zap.Error(err))
+	// return nil, err
+	// }
 
-	// 7.7 根据GPU个数绑定GPU
+	// 5 根据GPU个数绑定GPU, gpu为0,默认http.request请求时,gpuNum为0
 	gpus := make([]string, 0)
 	if gpuNum > 0 {
 		gpus, err = l.GetAvailableGPU(int32(nodeInt), gpuNum)
@@ -109,32 +109,33 @@ func (l *CreateContainerLogic) CreateContainer(req *common_models.CreateContaine
 		}
 	}
 
-	// 修改portainer容器名
+	// 6 container_name = username + portainer + 容器名
 	ContainerName := req.Name
 	req.Name = fmt.Sprintf("%s-%s-%s", l.svcCtx.Config.DockerAccount.ConPrefix, userName, ContainerName)
 	args["name"] = req.Name
-	// 创建容器
+
+	// 7 Encode writes the JSON encoding of v to the stream, NewEncoder returns a new encoder that writes to w
 	var buf bytes.Buffer
 	err = json.NewEncoder(&buf).Encode(req)
 	if err != nil {
+		logx.Error("json解析失败", err)
 		return nil, err
 	}
-	// 链接远程服务器
+	// 8 连接远程服务器
 	client, err := container.NewContainer()
 	if err != nil {
 		logx.Error("Portainer认证失败", zap.Error(err))
 		return nil, err
 	}
-	// 开始创建容器
+	// 9 开始创建容器
 	_, err, rsp := client.CreateContainer(int32(nodeInt), &buf, args)
 	if err != nil {
-		logx.Error("创建容器失败1", zap.Error(err))
+		logx.Error("创建容器失败-portainer", zap.Error(err))
 		return nil, err
 	}
 
+	// 10 容器信息写入数据库
 	gpuStr, _ := json.Marshal(gpus)
-
-	// 容器信息写入数据库
 	dataCon = common_models.Container{
 		ContainerId:   rsp.ID,
 		ContaineName:  ContainerName,
@@ -150,11 +151,11 @@ func (l *CreateContainerLogic) CreateContainer(req *common_models.CreateContaine
 	}
 	err = l.svcCtx.DB.Create(&dataCon).Error
 	if err != nil {
-		logx.Error("创建容器失败2", zap.Error(err))
+		logx.Error("创建容器失败-DB", zap.Error(err))
 		return nil, errors.New(err.Error())
 	}
 
-	// GPU使用情况更新
+	// 11 GPU使用情况更新
 	for _, gpu := range gpus {
 		// 更新gpu_monitor表
 		if err := l.svcCtx.DB.Where("uuid = ?", gpu).Model(&common_models.GpuMonitor{}).Updates(map[string]interface{}{"used": true, "user_id": userUuid, "username": userName}).Error; err != nil {
@@ -162,6 +163,7 @@ func (l *CreateContainerLogic) CreateContainer(req *common_models.CreateContaine
 			return nil, err
 		}
 	}
+
 	respId, err := strconv.Atoi(rsp.ID)
 	return &types.CreateContainerResp{
 		GpuNum: int64(respId),
