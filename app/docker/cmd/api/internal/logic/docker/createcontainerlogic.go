@@ -67,7 +67,7 @@ func (l *CreateContainerLogic) CreateContainer(req *common_models.CreateContaine
 		return nil, errors.New("容器名称已创建")
 	}
 
-	// 3 判断ENV——“USER_PASSWD”是否为空，否则 创建8位的随机密码
+	// 3 判断ENV——“USER_PASSWD”是否为空，否则 创建随机密码
 	env := req.Env
 	var passwd string
 	var userPasswd = l.svcCtx.Config.DockerAccount.UserPasswd
@@ -76,7 +76,7 @@ func (l *CreateContainerLogic) CreateContainer(req *common_models.CreateContaine
 		//密码校验
 		if !utils.RegexpPlas("^(?=.*[a-zA-Z])(?=.*\\d)[a-zA-Z\\d]{6,18}$", word) {
 			logx.Error("创建容器-容器密码校验失败")
-			return nil, errors.New("密码包含数字和字母，长度6-18位")
+			return nil, errors.New("包含数字和字母6-18位")
 		}
 		passwd = word
 	} else {
@@ -92,12 +92,6 @@ func (l *CreateContainerLogic) CreateContainer(req *common_models.CreateContaine
 	args := make(map[string]string)
 
 	// 4 创建容器-创建nfs卷 TODO
-	// 通过节点id获取节点ip
-	// var nodeInfo common_models.Node
-	// if err := l.svcCtx.DB.Where("portainer_id = ?", nodeInt).First(&nodeInfo).Error; err != nil {
-	// logx.Error("创建容器-获取节点信息失败", zap.Error(err))
-	// return nil, err
-	// }
 
 	// 5 根据GPU个数绑定GPU, gpu为0,默认http.request请求时,gpuNum为0
 	gpus := make([]string, 0)

@@ -8,7 +8,7 @@ Log:
   Encoding: plain
 
 # 超时时间 60s,防止出现request timeout错误
-Timeout: 600000
+# Timeout: 600000
 
 # mysql配置
 Mysql:
@@ -27,7 +27,7 @@ DockerAccount:
   UserPasswd: USER_PASSWD
   ConPrefix: sspaas
 
-
+#
 Harbor:
   Username: "admin"
   Password: "Harbor12345"

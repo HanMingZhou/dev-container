@@ -78,17 +78,17 @@ func (l *DeleteContainerByIdsLogic) CheckContainerOwner(username string, contain
 func (l *DeleteContainerByIdsLogic) DeleteContainerByIds(req *models.DeleteContainerReq) error {
 	// todo: add your logic here and delete this line
 
-	// 根据jwt上下文获取user_name
+	// 0 根据jwt上下文获取user_name
 	username := fmt.Sprintf("%s", l.ctx.Value("Username"))
 
-	// 初始化portainer
+	// 1 初始化portainer
 	client, err := container.NewContainer()
 	if err != nil {
 		logx.Error("Portainer认证失败", zap.Error(err))
 		return err
 	}
 
-	// 校验username所创建的container所有权 by username,nodeid, container_id
+	// 2 校验username所创建的container所有权 by username,nodeid, container_id
 	err = l.CheckContainerOwner(username, req.Ids, req.EndpointId)
 	if err != nil {
 		logx.Error("删除容器校验失败", zap.Error(err))
@@ -96,7 +96,7 @@ func (l *DeleteContainerByIdsLogic) DeleteContainerByIds(req *models.DeleteConta
 	}
 	logx.Error("删除容器校验成功")
 
-	// 删除容器
+	// 3 删除容器
 	for _, id := range req.Ids {
 		delErr := client.DeleteContainer(req.EndpointId, id)
 		if delErr != nil {

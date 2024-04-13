@@ -4,13 +4,12 @@ import (
 	"context"
 	"fmt"
 	"github.com/spf13/cast"
+	"github.com/zeromicro/go-zero/core/logx"
+	"go-zero-container/app/docker/cmd/api/internal/svc"
 	"go-zero-container/common/global/models"
 	"go-zero-container/common/utils/container"
 	"go.uber.org/zap"
 	"os"
-
-	"github.com/zeromicro/go-zero/core/logx"
-	"go-zero-container/app/docker/cmd/api/internal/svc"
 )
 
 type DownloadContainerLogsLogic struct {
@@ -55,7 +54,14 @@ func (l *DownloadContainerLogsLogic) DownloadContainerLogs(req *models.Container
 
 	// 4 保存日志
 	// log文件的download路径根据yaml文件的LogPath修改
-	logPath := fmt.Sprintf("%v/logs/%v/%v.log", l.svcCtx.Config.LogPath, username, req.Id)
+	// 创建目录
+	Path := fmt.Sprintf("%v/logs/%v", l.svcCtx.Config.LogPath.Path, username)
+	if err := os.MkdirAll(Path, os.ModePerm); err != nil {
+		logx.Error("创建path文件失败", zap.Error(err))
+		return err
+	}
+	//创建logpath文件
+	logPath := fmt.Sprintf("%v/logs/%v/%v.log", l.svcCtx.Config.LogPath.Path, username, req.Id)
 	file, err := os.Create(logPath)
 	if err != nil {
 		logx.Error("创建日志文件失败", zap.String("logPath", logPath))

@@ -42,7 +42,7 @@ func (l *CreateContainerByExecLogic) CreateContainerByExec(req *models.CreateExe
 	}
 	// 2 定义CreateExecBody
 	body := models.CreateExecBody{
-		ID:           "",
+		ID:           req.ContainerId,
 		AttachStdin:  true,
 		AttachStdout: true,
 		AttachStderr: true,
