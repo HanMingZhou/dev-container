@@ -1,5 +1,7 @@
 package container
 
+import "github.com/zeromicro/go-zero/core/logx"
+
 type ContainerCon struct {
 	Host        string `mapstructure:"host" json:"host" yaml:"host"`
 	Port        int    `mapstructure:"port" json:"port" yaml:"port"`
@@ -20,23 +22,47 @@ type Portainer struct {
 }
 
 // DOKCER 容器的实例化方法
-func NewContainer() (*Portainer, error) {
-	client := NewPortainer(&Portainer{
-		Config: ContainerCon{
-			//Host:     "192.168.0.78",
-			Host:     "192.168.0.53",
-			Port:     9000,
-			Schema:   "http",
-			User:     "admin",
-			Password: "cDfQtt2FQgvuHXz",
-			URL:      "/api",
-			Token:    "ptr_FzuDBJ3zMueL7gRbCCGfY7yaavdNOxEIGUdEzJYKGV0=",
-		},
-	})
+//
+//	func NewContainer() (*Portainer, error) {
+//		client := NewPortainer(
+//			&Portainer{
+//				Config: ContainerCon{
+//					//Host:     "192.168.0.78",
+//					Host:     "192.168.0.53",
+//					Port:     9000,
+//					Schema:   "http",
+//					User:     "admin",
+//					Password: "cDfQtt2FQgvuHXz",
+//					URL:      "/api",
+//					Token:    "ptr_FzuDBJ3zMueL7gRbCCGfY7yaavdNOxEIGUdEzJYKGV0=",
+//				},
+//			})
+//		err := client.Auth()
+//		if err != nil {
+//			return nil, err
+//		}
+//
+//		return &client, nil
+//	}
+func NewContainer() *Portainer {
+	client := NewPortainer(
+		&Portainer{
+			Config: ContainerCon{
+				//Host:     "192.168.0.78",
+				Host:     "192.168.0.53",
+				Port:     9000,
+				Schema:   "http",
+				User:     "admin",
+				Password: "cDfQtt2FQgvuHXz",
+				URL:      "/api",
+				Token:    "ptr_FzuDBJ3zMueL7gRbCCGfY7yaavdNOxEIGUdEzJYKGV0=",
+			},
+		})
 	err := client.Auth()
 	if err != nil {
-		return nil, err
+		logx.Error("初始化portainer失败", err)
+		return nil
 	}
 
-	return &client, nil
+	return &client
 }

@@ -36,11 +36,12 @@ func (l *InspectContainerLogic) InspectContainer(req *models.InspContainerReq) (
 	}
 
 	// 1 初始化portainer
-	client, err := container.NewContainer()
-	if err != nil {
-		logx.Error("Portainer认证失败", zap.Error(err))
-		return nil, err
-	}
+	//client, err := container.NewContainer()
+	//if err != nil {
+	//	logx.Error("Portainer认证失败", zap.Error(err))
+	//	return nil, err
+	//}
+	client := l.svcCtx.Portiner
 
 	// 2 调用InspectContainer
 	resp, err = client.InspectContainer(nodeId, req.ContainerId)

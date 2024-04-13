@@ -32,4 +32,21 @@ type Config struct {
 	LogPath struct {
 		Path string
 	}
+
+	Portainer struct {
+		Config struct {
+			Host        string
+			Port        int
+			Schema      string
+			User        string
+			Password    string
+			URL         string
+			Token       string
+			ServiceName string
+		}
+		Token     string
+		AuthToken string
+		ApiURL    string
+		Addr      string
+	}
 }

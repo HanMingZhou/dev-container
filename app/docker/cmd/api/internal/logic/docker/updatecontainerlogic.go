@@ -5,13 +5,11 @@ import (
 	"context"
 	"encoding/json"
 	"github.com/spf13/cast"
-	"go-zero-container/common/global/models"
-	"go-zero-container/common/utils/container"
-	"go.uber.org/zap"
-	"net/http"
-
 	"github.com/zeromicro/go-zero/core/logx"
 	"go-zero-container/app/docker/cmd/api/internal/svc"
+	"go-zero-container/common/global/models"
+	"go.uber.org/zap"
+	"net/http"
 )
 
 type UpdateContainerLogic struct {
@@ -32,15 +30,16 @@ func (l *UpdateContainerLogic) UpdateContainer(req *models.UpdateReq, r *http.Re
 	// todo: add your logic here and delete this line
 
 	// 0 初始化container.NewContainer()
-	client, err := container.NewContainer()
-	if err != nil {
-		logx.Error("Portainer认证失败", zap.Error(err))
-		return err
-	}
+	//client, err := container.NewContainer()
+	//if err != nil {
+	//	logx.Error("Portainer认证失败", zap.Error(err))
+	//	return err
+	//}
+	client := l.svcCtx.Portiner
 	// 1 解析restartPolicy
 	logx.Error("UpdateContainerUpdateReq:", req)
 	var buf bytes.Buffer
-	err = json.NewEncoder(&buf).Encode(&req)
+	err := json.NewEncoder(&buf).Encode(&req)
 	if err != nil {
 		logx.Error("更新Container重启策略body解析失败", zap.Error(err))
 		return err

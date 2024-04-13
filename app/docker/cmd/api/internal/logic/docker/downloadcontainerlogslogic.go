@@ -7,7 +7,6 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 	"go-zero-container/app/docker/cmd/api/internal/svc"
 	"go-zero-container/common/global/models"
-	"go-zero-container/common/utils/container"
 	"go.uber.org/zap"
 	"os"
 )
@@ -30,11 +29,12 @@ func (l *DownloadContainerLogsLogic) DownloadContainerLogs(req *models.Container
 	// todo: add your logic here and delete this line
 
 	// 0 初始化portainer
-	client, err := container.NewContainer()
-	if err != nil {
-		logx.Error("Portainer认证失败", zap.Error(err))
-		return err
-	}
+	//client, err := container.NewContainer()
+	//if err != nil {
+	//	logx.Error("Portainer认证失败", zap.Error(err))
+	//	return err
+	//}
+	client := l.svcCtx.Portiner
 
 	// 1 查看容器是否存  table: container
 	if err := l.svcCtx.DB.Where("container_id =?", req.Id).First(&models.Container{}).Error; err != nil {

@@ -3,12 +3,10 @@ package docker
 import (
 	"context"
 	"github.com/spf13/cast"
-	"go-zero-container/common/global/models"
-	"go-zero-container/common/utils/container"
-	"go.uber.org/zap"
-
 	"github.com/zeromicro/go-zero/core/logx"
 	"go-zero-container/app/docker/cmd/api/internal/svc"
+	"go-zero-container/common/global/models"
+	"go.uber.org/zap"
 )
 
 type GetContainerLogsLogic struct {
@@ -28,11 +26,12 @@ func NewGetContainerLogsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 func (l *GetContainerLogsLogic) GetContainerLogs(req *models.ContainerLogReq) (logs []string, err error) {
 	// todo: add your logic here and delete this line
 	// 0 初始化portainer
-	client, err := container.NewContainer()
-	if err != nil {
-		logx.Error("Portainer 初始化失败", zap.Error(err))
-		return logs, err
-	}
+	//client, err := container.NewContainer()
+	//if err != nil {
+	//	logx.Error("Portainer 初始化失败", zap.Error(err))
+	//	return logs, err
+	//}
+	client := l.svcCtx.Portiner
 
 	// 1 查看容器是否存在
 	if err := l.svcCtx.DB.Where("container_id =?", req.Id).First(&models.Container{}).Error; err != nil {

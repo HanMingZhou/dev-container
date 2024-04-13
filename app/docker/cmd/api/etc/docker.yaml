@@ -41,3 +41,19 @@ AES:
 # logs文件保存路径
 LogPath:
   Path: C:\Users\tian3\Desktop
+
+#Portainer
+Portainer:
+  Config:
+    Host: "192.168.0.53"
+    Port: 9000
+    Schema: "http"
+    User: "admin"
+    Password: "cDfQtt2FQgvuHXz"
+    URL: "/api"
+    Token: "ptr_FzuDBJ3zMueL7gRbCCGfY7yaavdNOxEIGUdEzJYKGV0="
+    ServiceName:
+  Token:
+  AuthToken:
+  ApiURL: "http://192.168.0.53:9000/api"
+  Addr:  "192.168.0.53:9000"

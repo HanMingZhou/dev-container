@@ -2,16 +2,14 @@ package docker
 
 import (
 	"context"
+	"errors"
 	"fmt"
-	"github.com/pkg/errors"
+	"github.com/zeromicro/go-zero/core/logx"
+	"go-zero-container/app/docker/cmd/api/internal/svc"
 	"go-zero-container/common/global/models"
-	"go-zero-container/common/utils/container"
 	"go.uber.org/zap"
 	"strings"
 	"time"
-
-	"github.com/zeromicro/go-zero/core/logx"
-	"go-zero-container/app/docker/cmd/api/internal/svc"
 )
 
 type GetContainerListLogic struct {
@@ -114,11 +112,12 @@ func (l *GetContainerListLogic) GetContainersStatusByUUID(list []models.Containe
 	}
 	// 2、查找所有节点的容器(调用portainer)
 	// 2.1、初始化portainer
-	client, err := container.NewContainer()
-	if err != nil {
-		logx.Error("Portainer认证失败", zap.Error(err))
-		return nil, err
-	}
+	//client, err := container.NewContainer()
+	//if err != nil {
+	//	logx.Error("Portainer认证失败", zap.Error(err))
+	//	return nil, err
+	//}
+	client := l.svcCtx.Portiner
 	// 2.2、遍历所有节点下的所有容器
 	for nodeId, cons := range nodeIds {
 		containers, err := client.ListTargetContainers(nodeId, cons)

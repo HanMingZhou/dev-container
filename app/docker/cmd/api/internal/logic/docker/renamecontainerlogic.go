@@ -2,12 +2,10 @@ package docker
 
 import (
 	"context"
-	"go-zero-container/common/global/models"
-	"go-zero-container/common/utils/container"
-	"go.uber.org/zap"
-
 	"github.com/zeromicro/go-zero/core/logx"
 	"go-zero-container/app/docker/cmd/api/internal/svc"
+	"go-zero-container/common/global/models"
+	"go.uber.org/zap"
 )
 
 type RenameContainerLogic struct {
@@ -27,11 +25,12 @@ func NewRenameContainerLogic(ctx context.Context, svcCtx *svc.ServiceContext) *R
 func (l *RenameContainerLogic) RenameContainer(req *models.RenameReq) error {
 	// todo: add your logic here and delete this line
 	// 0 初始化portainer
-	client, err := container.NewContainer()
-	if err != nil {
-		logx.Error("Portainer认证失败", zap.Error(err))
-		return err
-	}
+	//client, err := container.NewContainer()
+	//if err != nil {
+	//	logx.Error("Portainer认证失败", zap.Error(err))
+	//	return err
+	//}
+	client := l.svcCtx.Portiner
 	// 1 获取username By l.ctx  目前更新container_name时暂时不用username
 	// userName := fmt.Sprintf("%s", l.ctx.Value("Username"))
 	// todo:暂时不通过http.request提供username
@@ -41,7 +40,7 @@ func (l *RenameContainerLogic) RenameContainer(req *models.RenameReq) error {
 	args := make(map[string]string)
 	conPrefix := l.svcCtx.Config.DockerAccount.ConPrefix
 	args["name"] = l.svcCtx.Config.DockerAccount.ConPrefix + "-" + req.Name
-	err = client.RenameContainer(req.EndpointId, req.ContainerId, args)
+	err := client.RenameContainer(req.EndpointId, req.ContainerId, args)
 	if err != nil {
 		logx.Error("更新容器名失败", zap.Error(err))
 		return err

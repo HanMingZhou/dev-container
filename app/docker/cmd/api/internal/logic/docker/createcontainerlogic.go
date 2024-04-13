@@ -6,20 +6,17 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/zeromicro/go-zero/core/logx"
+	"go-zero-container/app/docker/cmd/api/internal/svc"
+	"go-zero-container/app/docker/cmd/api/internal/types"
 	common_models "go-zero-container/common/global/models"
 	"go-zero-container/common/utils"
 	"go-zero-container/common/utils/aes"
-	"go-zero-container/common/utils/container"
 	"go-zero-container/common/utils/mapset"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 	"net/http"
 	"strconv"
-
-	"go-zero-container/app/docker/cmd/api/internal/svc"
-	"go-zero-container/app/docker/cmd/api/internal/types"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type CreateContainerLogic struct {
@@ -116,7 +113,8 @@ func (l *CreateContainerLogic) CreateContainer(req *common_models.CreateContaine
 		return nil, err
 	}
 	// 8 连接远程服务器
-	client, err := container.NewContainer()
+	//client, err := container.NewContainer()
+	client := l.svcCtx.Portiner
 	if err != nil {
 		logx.Error("Portainer认证失败", zap.Error(err))
 		return nil, err

@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/spf13/cast"
 	"go-zero-container/common/global/models"
-	"go-zero-container/common/utils/container"
 	"go.uber.org/zap"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -82,14 +81,15 @@ func (l *DeleteContainerByIdsLogic) DeleteContainerByIds(req *models.DeleteConta
 	username := fmt.Sprintf("%s", l.ctx.Value("Username"))
 
 	// 1 初始化portainer
-	client, err := container.NewContainer()
-	if err != nil {
-		logx.Error("Portainer认证失败", zap.Error(err))
-		return err
-	}
+	//client, err := container.NewContainer()
+	//if err != nil {
+	//	logx.Error("Portainer认证失败", zap.Error(err))
+	//	return err
+	//}
+	client := l.svcCtx.Portiner
 
 	// 2 校验username所创建的container所有权 by username,nodeid, container_id
-	err = l.CheckContainerOwner(username, req.Ids, req.EndpointId)
+	err := l.CheckContainerOwner(username, req.Ids, req.EndpointId)
 	if err != nil {
 		logx.Error("删除容器校验失败", zap.Error(err))
 		return err

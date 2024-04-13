@@ -4,12 +4,10 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"go-zero-container/common/global/models"
-	"go-zero-container/common/utils/container"
-	"go.uber.org/zap"
-
 	"github.com/zeromicro/go-zero/core/logx"
 	"go-zero-container/app/docker/cmd/api/internal/svc"
+	"go-zero-container/common/global/models"
+	"go.uber.org/zap"
 )
 
 type CreateContainerByExecLogic struct {
@@ -30,7 +28,8 @@ func (l *CreateContainerByExecLogic) CreateContainerByExec(req *models.CreateExe
 	// todo: add your logic here and delete this line
 
 	// 0 初始化portainer
-	client, err := container.NewContainer()
+	//client, err := container.NewContainer()
+	client := l.svcCtx.Portiner
 	if err != nil {
 		logx.Error("Portainer 初始化失败", zap.Error(err))
 		return nil, err
