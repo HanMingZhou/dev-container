@@ -1,6 +1,9 @@
 package config
 
-import "github.com/zeromicro/go-zero/rest"
+import (
+	"github.com/zeromicro/go-zero/rest"
+	"github.com/zeromicro/go-zero/zrpc"
+)
 
 type Config struct {
 	rest.RestConf
@@ -12,4 +15,22 @@ type Config struct {
 	Mysql struct {
 		DataSource string
 	}
+	Portainer struct {
+		Config struct {
+			Host        string
+			Port        int
+			Schema      string
+			User        string
+			Password    string
+			URL         string
+			Token       string
+			ServiceName string
+		}
+		Token     string
+		AuthToken string
+		ApiURL    string
+		Addr      string
+	}
+	//rpc 服务
+	ImageRpcConf zrpc.RpcClientConf
 }

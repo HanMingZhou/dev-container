@@ -3,13 +3,11 @@ package image
 import (
 	"context"
 	"errors"
-	common_models "go-zero-container/common/global/models"
-	"gorm.io/gorm"
-
+	"github.com/spf13/cast"
+	"github.com/zeromicro/go-zero/core/logx"
 	"go-zero-container/app/image/cmd/api/internal/svc"
 	"go-zero-container/app/image/cmd/api/internal/types"
-
-	"github.com/zeromicro/go-zero/core/logx"
+	"go-zero-container/app/image/cmd/rpc/imageserver"
 )
 
 type GetAllImageLogic struct {
@@ -29,15 +27,25 @@ func NewGetAllImageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetAl
 func (l *GetAllImageLogic) GetAllImage() (resp *types.GetAllImageResp, err error) {
 	// todo: add your logic here and delete this line
 
-	var imageRegistry []common_models.ImageRegistry
-
-	err = l.svcCtx.DB.Find(&imageRegistry).Error
-	if err != nil && err == gorm.ErrRecordNotFound {
-		return nil, errors.New("未查询到镜像")
-	} else if err != nil {
-		return nil, errors.New("查询失败，请稍后重试")
+	res, err := l.svcCtx.ImageRpc.GetMyImage(l.ctx, &imageserver.GetMyImageReq{})
+	if err != nil {
+		return nil, errors.New("GetAllImage error: " + err.Error())
+	}
+	var imageList []types.ImageRegistry
+	for _, img := range res.ImageRegistry {
+		imageList = append(imageList, types.ImageRegistry{
+			Rid:            img.Rid,
+			Kind:           img.Kind,
+			UserId:         cast.ToUint(img.UserId),
+			Name:           img.Name,
+			Url:            img.Url,
+			Authentication: img.Authentication,
+			Username:       img.Username,
+			Password:       img.Password,
+		})
 	}
 	return &types.GetAllImageResp{
-		ImageList: imageRegistry,
+		ImageList: imageList,
 	}, nil
+
 }

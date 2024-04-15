@@ -1,12 +1,8 @@
 package models
 
-import (
-	"gorm.io/gorm"
-)
-
 // ImageRegistry 镜像仓库结构体
 type ImageRegistry struct {
-	gorm.Model
+	//gorm.Model
 	Rid            int64  `json:"rid" gorm:"column:rid;comment:portainer仓库id"`
 	Kind           int32  `json:"kind" gorm:"column:kind;comment:类型(1公有 2私有);"`
 	UserId         uint   `json:"user_id" gorm:"column:user_id;comment:用户id;"`

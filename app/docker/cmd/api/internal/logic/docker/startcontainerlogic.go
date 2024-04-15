@@ -49,7 +49,7 @@ func (l *StartContainerLogic) StartContainer(req *models.ContainerReq) error {
 	//	//logx.Info("端口检查成功", zap.String("Id", id))
 	//}
 	//
-	client := l.svcCtx.Portiner
+	client := l.svcCtx.Portainer
 	for _, id := range req.Ids {
 		// start a new container by 节点nodeID, 容器containerId
 		err := client.StartContainer(req.EndpointId, id)

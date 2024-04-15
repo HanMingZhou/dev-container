@@ -1,6 +1,13 @@
 Name: image
 Host: 0.0.0.0
-Port: 8889
+Port: 8888
+# RPC
+ImageRpcConf:
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: image.rpc
+
 # mysql配置
 Mysql:
   DataSource: root:123456@tcp(127.0.0.1:3306)/db1?charset=utf8mb4&parseTime=True&loc=Local
@@ -14,3 +21,19 @@ Log:
   ServiceName: file
   Level: error
   Encoding: plain
+
+#Portainer
+Portainer:
+  Config:
+    Host: "192.168.0.53"
+    Port: 9000
+    Schema: "http"
+    User: "admin"
+    Password: "cDfQtt2FQgvuHXz"
+    URL: "/api"
+    Token: "ptr_FzuDBJ3zMueL7gRbCCGfY7yaavdNOxEIGUdEzJYKGV0="
+    ServiceName:
+  Token:
+  AuthToken:
+  ApiURL: "http://192.168.0.53:9000/api"
+  Addr:  "192.168.0.53:9000"

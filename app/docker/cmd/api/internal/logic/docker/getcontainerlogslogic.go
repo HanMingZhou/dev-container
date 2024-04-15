@@ -31,7 +31,7 @@ func (l *GetContainerLogsLogic) GetContainerLogs(req *models.ContainerLogReq) (l
 	//	logx.Error("Portainer 初始化失败", zap.Error(err))
 	//	return logs, err
 	//}
-	client := l.svcCtx.Portiner
+	client := l.svcCtx.Portainer
 
 	// 1 查看容器是否存在
 	if err := l.svcCtx.DB.Where("container_id =?", req.Id).First(&models.Container{}).Error; err != nil {

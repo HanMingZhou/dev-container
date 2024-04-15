@@ -41,7 +41,7 @@ func (l *InspectContainerLogic) InspectContainer(req *models.InspContainerReq) (
 	//	logx.Error("Portainer认证失败", zap.Error(err))
 	//	return nil, err
 	//}
-	client := l.svcCtx.Portiner
+	client := l.svcCtx.Portainer
 
 	// 2 调用InspectContainer
 	resp, err = client.InspectContainer(nodeId, req.ContainerId)

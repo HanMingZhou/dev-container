@@ -86,7 +86,7 @@ func (l *DeleteContainerByIdsLogic) DeleteContainerByIds(req *models.DeleteConta
 	//	logx.Error("Portainer认证失败", zap.Error(err))
 	//	return err
 	//}
-	client := l.svcCtx.Portiner
+	client := l.svcCtx.Portainer
 
 	// 2 校验username所创建的container所有权 by username,nodeid, container_id
 	err := l.CheckContainerOwner(username, req.Ids, req.EndpointId)

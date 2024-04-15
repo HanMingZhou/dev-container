@@ -8,15 +8,15 @@ import (
 )
 
 type ServiceContext struct {
-	Config   config.Config
-	DB       *gorm.DB
-	Portiner *container.Portainer
+	Config    config.Config
+	DB        *gorm.DB
+	Portainer *container.Portainer
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
 	return &ServiceContext{
-		Config:   c,
-		DB:       initDB.InitGorm(c.Mysql.DataSource),
-		Portiner: container.NewContainer(),
+		Config:    c,
+		DB:        initDB.InitGorm(c.Mysql.DataSource),
+		Portainer: container.NewContainer(),
 	}
 }

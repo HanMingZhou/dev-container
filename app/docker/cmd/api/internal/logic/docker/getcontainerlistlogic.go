@@ -117,7 +117,7 @@ func (l *GetContainerListLogic) GetContainersStatusByUUID(list []models.Containe
 	//	logx.Error("Portainer认证失败", zap.Error(err))
 	//	return nil, err
 	//}
-	client := l.svcCtx.Portiner
+	client := l.svcCtx.Portainer
 	// 2.2、遍历所有节点下的所有容器
 	for nodeId, cons := range nodeIds {
 		containers, err := client.ListTargetContainers(nodeId, cons)

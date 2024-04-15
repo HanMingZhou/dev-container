@@ -34,7 +34,7 @@ func (l *DownloadContainerLogsLogic) DownloadContainerLogs(req *models.Container
 	//	logx.Error("Portainer认证失败", zap.Error(err))
 	//	return err
 	//}
-	client := l.svcCtx.Portiner
+	client := l.svcCtx.Portainer
 
 	// 1 查看容器是否存  table: container
 	if err := l.svcCtx.DB.Where("container_id =?", req.Id).First(&models.Container{}).Error; err != nil {

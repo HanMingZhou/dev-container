@@ -35,7 +35,7 @@ func (l *UpdateContainerLogic) UpdateContainer(req *models.UpdateReq, r *http.Re
 	//	logx.Error("Portainer认证失败", zap.Error(err))
 	//	return err
 	//}
-	client := l.svcCtx.Portiner
+	client := l.svcCtx.Portainer
 	// 1 解析restartPolicy
 	logx.Error("UpdateContainerUpdateReq:", req)
 	var buf bytes.Buffer

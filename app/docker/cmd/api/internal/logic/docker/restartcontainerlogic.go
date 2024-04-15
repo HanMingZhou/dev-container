@@ -30,7 +30,7 @@ func (l *RestartContainerLogic) RestartContainer(req *models.ContainerReq) error
 	//	logx.Error("Portainer 初始化失败", zap.Error(err))
 	//	return err
 	//}
-	client := l.svcCtx.Portiner
+	client := l.svcCtx.Portainer
 	// 1 遍历container.ids
 	var err error
 	for _, id := range req.Ids {

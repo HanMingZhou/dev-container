@@ -114,11 +114,11 @@ func (l *CreateContainerLogic) CreateContainer(req *common_models.CreateContaine
 	}
 	// 8 连接远程服务器
 	//client, err := container.NewContainer()
-	client := l.svcCtx.Portiner
-	if err != nil {
+	client := l.svcCtx.Portainer
+	/*if err != nil {
 		logx.Error("Portainer认证失败", zap.Error(err))
 		return nil, err
-	}
+	}*/
 	// 9 开始创建容器
 	_, err, rsp := client.CreateContainer(int32(nodeInt), &buf, args)
 	if err != nil {

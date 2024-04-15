@@ -1,29 +1,45 @@
 syntax = "v1"
 
-info(
-	title: "image查看"
-	author: "type author here"
-	email: "type email here"
+info (
+	title:   "image查看"
+	author:  "type author here"
+	email:   "type email here"
 	version: "type version here"
 )
+
+type ImageRegistry {
+	//gorm.Model
+	Rid            int64  `json:"rid" gorm:"column:rid;comment:portainer仓库id"`
+	Kind           int32  `json:"kind" gorm:"column:kind;comment:类型(1公有 2私有);"`
+	UserId         uint   `json:"user_id" gorm:"column:user_id;comment:用户id;"`
+	Name           string `json:"name" gorm:"column:name;comment:仓库名称;"`
+	Url            string `json:"url" gorm:"column:url;comment:仓库地址;"`
+	Authentication int32  `json:"authentication" gorm:"column:authentication;comment:是否开启认证(1开启 2不开启);"`
+	Username       string `json:"username" gorm:"column:username;comment:用户名;"`
+	Password       string `json:"password" gorm:"column:password;comment:密码;"`
+}
+
 // 获取用户镜像时需携带参数
 type getUserImageReq {
 	UserId int64 `json:"userid"`
 }
 
-// 获取个人镜像所返回参数
-type getMyImageResp {
-	ImageList interface{} `json:"imagelist"`
+type getUserImageResp {
+	ImageList []ImageRegistry `json:"imagelist"`
 }
 
-// 获取用户镜像所返回参数
-type getUserImageResp {
-	ImageList interface{} `json:"imagelist"`
+// 获取个人镜像所返回参数
+type getMyImageResp {
+	ImageList []ImageRegistry `json:"imagelist"`
 }
 
 // 获取所有镜像所返回参数
-type getAllImageResp {
+type getAllImageReq {
 	ImageList interface{} `json:"imagelist"`
+}
+
+type getAllImageResp {
+	ImageList []ImageRegistry `json:"imagelist"`
 }
 
 // 需要 jwt 认证登录状态
@@ -33,7 +49,7 @@ type getAllImageResp {
 	jwt:    JwtAuth
 )
 service image {
-	@doc "getUserImage"
+	@doc "getMyImage"
 	@handler getMyImage
 	post /images/getMyImage returns (getMyImageResp)
 

@@ -29,7 +29,7 @@ func (l *CreateContainerByExecLogic) CreateContainerByExec(req *models.CreateExe
 
 	// 0 初始化portainer
 	//client, err := container.NewContainer()
-	client := l.svcCtx.Portiner
+	client := l.svcCtx.Portainer
 	if err != nil {
 		logx.Error("Portainer 初始化失败", zap.Error(err))
 		return nil, err

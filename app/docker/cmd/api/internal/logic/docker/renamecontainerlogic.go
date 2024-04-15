@@ -30,7 +30,7 @@ func (l *RenameContainerLogic) RenameContainer(req *models.RenameReq) error {
 	//	logx.Error("Portainer认证失败", zap.Error(err))
 	//	return err
 	//}
-	client := l.svcCtx.Portiner
+	client := l.svcCtx.Portainer
 	// 1 获取username By l.ctx  目前更新container_name时暂时不用username
 	// userName := fmt.Sprintf("%s", l.ctx.Value("Username"))
 	// todo:暂时不通过http.request提供username

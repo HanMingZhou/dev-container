@@ -2,12 +2,10 @@ package image
 
 import (
 	"context"
-	"errors"
-	common_models "go-zero-container/common/global/models"
-	"gorm.io/gorm"
-
+	"github.com/spf13/cast"
 	"go-zero-container/app/image/cmd/api/internal/svc"
 	"go-zero-container/app/image/cmd/api/internal/types"
+	"go-zero-container/app/image/cmd/rpc/imageserver"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -28,21 +26,33 @@ func NewGetUserImageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetU
 
 func (l *GetUserImageLogic) GetUserImage(req *types.GetUserImageReq) (resp *types.GetUserImageResp, err error) {
 	// todo: add your logic here and delete this line
-	var imageRegistry []common_models.ImageRegistry
 	//var userId uint
 	//re := l.svcCtx.DB.Where("user_id = ?", req.UserId).Find(&userId, req.UserId)
 	// 暂时先不过滤user.ID
 	//if re.RowsAffected == 0 {
 	//	return nil, errors.New("用户不存在")
 	//}
-	err = l.svcCtx.DB.Where("user_id = ? or kind = 1", req.UserId).Find(&imageRegistry).Error
-	if err != nil && err == gorm.ErrRecordNotFound {
-		return nil, errors.New("当前用户未创建镜像")
-	} else if err != nil {
-		return nil, errors.New("查询失败，请稍后重试")
+	res, err := l.svcCtx.ImageRpc.GetUserImage(l.ctx, &imageserver.GetUserImageReq{
+		UserId: req.UserId,
+	})
+	if err != nil {
+		return nil, err
+	}
+	var imageList []types.ImageRegistry
+	for _, img := range res.ImageRegistry {
+		imageList = append(imageList, types.ImageRegistry{
+			Rid:            img.Rid,
+			Kind:           img.Kind,
+			UserId:         cast.ToUint(img.UserId),
+			Name:           img.Name,
+			Url:            img.Url,
+			Authentication: img.Authentication,
+			Username:       img.Username,
+			Password:       img.Password,
+		})
 	}
 	return &types.GetUserImageResp{
-		ImageList: imageRegistry,
+		ImageList: imageList,
 	}, nil
 
 }

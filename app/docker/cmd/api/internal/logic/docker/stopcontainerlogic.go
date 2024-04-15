@@ -31,7 +31,7 @@ func (l *StopContainerLogic) StopContainer(req *models.ContainerReq) error {
 	//	logx.Error("Portainer 初始化失败")
 	//	return err
 	//}
-	client := l.svcCtx.Portiner
+	client := l.svcCtx.Portainer
 	time.Sleep(1 * time.Second)
 	for _, id := range req.Ids {
 		// stop a new container by 节点nodeID, 容器containerId
